@@ -12,7 +12,7 @@ public class Main {
 
 		sc.close();
 
-		double out = calcF(input, 2, input, 1E-15, x -> (x) * (x)+2); // Use the method
+		double out = calcF(input, 0, input, 1E-15, x -> (x - 3) * (x - 3)); // Use the method
 		System.out.printf("\nResult: %f", out);
 
 	}
@@ -20,11 +20,13 @@ public class Main {
 	/**
 	 * Calculate with Binary search
 	 * 
-	 * @param y0    your number(input)
-	 * @param xMin  minimum of search area f(xMin) must be smaller than input
-	 * @param xMax  maximum of search area f(xMax) must be bigger than input
-	 * @param acc   accuracy !(acc < 0 && acc < 1E-15)
-	 * @param iFunc f(x)
+	 * @param y0    <br>your number(input)
+	 * @param xMin  <br>minimum of search area <i>f</i>(xMin) must be smaller than input
+	 *              and must be smaller as xMax
+	 * @param xMax  <br>maximum of search area <i>f</i>(xMax) must be bigger as input
+	 *              and must be bigger as xMin
+	 * @param acc   <br>accuracy !(acc < 0 && acc < 1E-15)
+	 * @param iFunc <br>f(x) for example:<br> x - > x*x
 	 * @return the result of Binary search with your f(x)
 	 */
 	private static double calcF(double y0, double xMin, double xMax, double acc, IFunction iFunc) {
@@ -34,9 +36,9 @@ public class Main {
 		if (iFunc.function(xMax) < y0) {
 			System.out.println(iFunc.function(xMax));
 			throw new IllegalArgumentException("Please check your arguments!(max)");
-		}else if(iFunc.function(xMin) > y0) {
+		} else if (iFunc.function(xMin) > y0) {
 			throw new IllegalArgumentException("Please check your arguments!(min)");
-		}else if(xMax < xMin) {
+		} else if (xMax < xMin) {
 			throw new IllegalArgumentException("Please check your arguments!(min, max)");
 		}
 
