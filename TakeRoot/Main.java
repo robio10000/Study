@@ -12,43 +12,54 @@ public class Main {
 
 		sc.close();
 
-		double out = calcF(input, 0, input, 1E-15, x -> (x - 3) * (x - 3)); // Use the method
-		System.out.printf("\nResult: %f", out);
+		double out = calcF(input, 0, 2, 1E-15, x -> (x - 3) * (x - 3) + 3); // Use the method
+		System.out.println("(y | x)\n(" + input + " | " + out + ")");
 
 	}
 
 	/**
 	 * Calculate with Binary search
 	 * 
-	 * @param y0    <br>your number(input)
-	 * @param xMin  <br>minimum of search area <i>f</i>(xMin) must be smaller than input
+	 * @param y0    <br>
+	 *              your number(input)
+	 * @param xMin  <br>
+	 *              minimum of search area <i>f</i>(xMin) must be smaller than input
 	 *              and must be smaller as xMax
-	 * @param xMax  <br>maximum of search area <i>f</i>(xMax) must be bigger as input
+	 * @param xMax  <br>
+	 *              maximum of search area <i>f</i>(xMax) must be bigger as input
 	 *              and must be bigger as xMin
-	 * @param acc   <br>accuracy !(acc < 0 && acc < 1E-15)
-	 * @param iFunc <br>f(x) for example:<br> x - > x*x
+	 * @param acc   <br>
+	 *              accuracy !(acc < 0 && acc < 1E-15)
+	 * @param iFunc <br>
+	 *              f(x) for example:<br>
+	 *              x - > x*x
 	 * @return the result of Binary search with your f(x)
 	 */
 	private static double calcF(double y0, double xMin, double xMax, double acc, IFunction iFunc) {
 
+		// if anyone of the parameters are NaN
+		if (Double.isNaN(y0) || Double.isNaN(xMin) || Double.isNaN(xMax) || Double.isNaN(acc)) {
+			throw new IllegalArgumentException("Please check your arguments!(NaN)");
+		}
+
+		// What is f(xMin) and f(xMax) for debug
+//		double fMin = iFunc.function(xMin);
+//		double fMax = iFunc.function(xMax);
+
+		boolean down = false;
 		// checks if input is bigger than f(xMax) or f(xMin) smaller than input or xMax
 		// is smaller than xMin
-		if (iFunc.function(xMax) < y0) {
-			System.out.println(iFunc.function(xMax));
-			throw new IllegalArgumentException("Please check your arguments!(max)");
-		} else if (iFunc.function(xMin) > y0) {
-			throw new IllegalArgumentException("Please check your arguments!(min)");
-		} else if (xMax < xMin) {
-			throw new IllegalArgumentException("Please check your arguments!(min, max)");
+		if (iFunc.function(xMax) < y0  && iFunc.function(xMin) > y0) {
+			//throw new IllegalArgumentException("Please check your arguments![ f(xMax) is < y0]");
+			down = true;
+		}else if(iFunc.function(xMax) > y0 && iFunc.function(xMin) < y0) {
+			down = false;
+		}else if (xMax < xMin) {
+			throw new IllegalArgumentException("Please check your arguments!(min is > max)");
 		}
 
 		if (acc < 1E-15) { // If the accuracy is smaller 1E-15(0,000000000000001)
 			throw new IllegalArgumentException("Please check your arguments!(accuracy)");
-		}
-
-		// if anyone of the parameters are NaN
-		if (Double.isNaN(y0) || Double.isNaN(xMin) || Double.isNaN(xMax) || Double.isNaN(acc)) {
-			throw new IllegalArgumentException("Please check your arguments!(NaN)");
 		}
 
 		double min = xMin;
@@ -61,9 +72,17 @@ public class Main {
 			double fX = iFunc.function(mid); // f(x)
 
 			if (fX < y0) { // Checks if f(x) < input
-				min = mid;
+				if (down == true) {
+					max = mid;
+				}else {
+					min = mid;
+				}
 			} else {
-				max = mid;
+				if (down == true) {
+					min = mid;
+				}else {
+					max = mid;
+				}
 			}
 
 			double diff = Math.abs(fX - y0); // calculate the difference between the middle and the input
@@ -85,5 +104,4 @@ public class Main {
 
 		}
 	}
-
 }
